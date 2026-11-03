@@ -36,3 +36,22 @@ class Application(models.Model):
 
     def __str__(self):
         return f"{self.company} - {self.role_title}"
+
+class FollowUp(models.Model):
+    # Deleting an application deletes its follow-ups (cascade)
+    application = models.ForeignKey(
+        Application,
+        on_delete=models.CASCADE,
+        related_name="followups",
+    )
+    followup_date = models.DateField()
+    note = models.CharField(max_length=255, null=True, blank=True)
+    is_done = models.BooleanField(default=False)
+    reminder_sent = models.BooleanField(default=False)   # used by email reminders later
+
+    class Meta:
+        ordering = ["followup_date", "id"]
+        indexes = [models.Index(fields=["is_done", "followup_date"])]   # fast "due soon" query
+
+    def __str__(self):
+        return f"{self.application.company} - {self.followup_date}"
