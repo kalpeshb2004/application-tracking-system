@@ -153,8 +153,11 @@ REST_FRAMEWORK = {
         "rest_framework.permissions.IsAuthenticated",
     ),
     "DEFAULT_PAGINATION_CLASS": "applications.pagination.StandardPagination",
+    "DEFAULT_THROTTLE_RATES": {
+        "resume": "10/min",
+        "jd_parse": "10/min",      # AI parser ke liye. Abhi use nahi ho raha, harmless
+    },
 }
-
 # ---------- JWT (SimpleJWT) ----------
 SIMPLE_JWT = {
     "ACCESS_TOKEN_LIFETIME": timedelta(minutes=60),

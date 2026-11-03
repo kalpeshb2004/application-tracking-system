@@ -44,6 +44,9 @@ class User(AbstractUser):
     role = models.CharField(max_length=20, choices=Role.choices, default=Role.USER)
     reminders_enabled = models.BooleanField(default=True)
     resume_path = models.CharField(max_length=255, blank=True, null=True)
+    resume_text = models.TextField(blank=True, null=True)          # extracted text only
+    resume_name = models.CharField(max_length=255, blank=True, null=True)
+    resume_updated_at = models.DateTimeField(blank=True, null=True)
 
     USERNAME_FIELD = "email"       # login with email
     REQUIRED_FIELDS = ["name"]     # asked by createsuperuser
