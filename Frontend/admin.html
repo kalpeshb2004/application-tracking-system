@@ -149,7 +149,7 @@
     async function loadUsers() {
       const my = ++reqId;
       // Ask 1 extra row. If it comes back, a next page exists.
-      const params = new URLSearchParams({ limit: PAGE_SIZE + 1, offset: page * PAGE_SIZE });
+      const params = new URLSearchParams({ limit: PAGE_SIZE, offset: page * PAGE_SIZE });
       const q = $("search").value.trim();
       if (q) params.set("search", q);
       if ($("activeFilter").value) params.set("is_active", $("activeFilter").value);
@@ -158,8 +158,8 @@
         const data = await apiFetch(`/admin/users?${params}`);
         if (my !== reqId) return;
         clearError();
-        hasNext = data.length > PAGE_SIZE;
-        rows = data.slice(0, PAGE_SIZE);
+        hasNext = data.next !== null;
+        rows = data.results;
         renderUsers();
       } catch (err) {
         if (my === reqId) showError(err.message);
@@ -259,7 +259,7 @@
       $("appsEmpty").classList.add("hidden");
       $("dlg").showModal();
       try {
-        const apps = await apiFetch(`/admin/users/${u.id}/applications?limit=50`);
+        const apps = (await apiFetch(`/admin/users/${u.id}/applications?limit=50`)).results;
         $("appsEmpty").classList.toggle("hidden", apps.length > 0);
         apps.forEach((a) => {
           const tr = document.createElement("tr");

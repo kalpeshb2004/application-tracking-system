@@ -166,7 +166,7 @@
     async function load() {
       const my = ++reqId;
       // Ask for 1 extra row. If it comes back, a next page exists.
-      const params = new URLSearchParams({ limit: PAGE_SIZE + 1, offset: page * PAGE_SIZE });
+      const params = new URLSearchParams({ limit: PAGE_SIZE, offset: page * PAGE_SIZE });
       if ($("statusFilter").value) params.set("status", $("statusFilter").value);
       const q = $("search").value.trim();
       if (q) params.set("search", q);
@@ -175,8 +175,8 @@
         const data = await apiFetch(`/applications?${params}`);
         if (my !== reqId) return;
         clearError();
-        hasNext = data.length > PAGE_SIZE;
-        rows = data.slice(0, PAGE_SIZE);
+        hasNext = data.next !== null;     // DRF tells us if a next page exists
+        rows = data.results;
         render();
       } catch (err) {
         if (my === reqId) showError(err.message);

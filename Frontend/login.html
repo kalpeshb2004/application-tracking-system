@@ -43,16 +43,18 @@
       btn.disabled = true;
       btn.textContent = "Logging in...";
 
-      try {
-        // Backend login expects FORM data (OAuth2), not JSON
-        const body = new URLSearchParams({
-          username: document.getElementById("email").value.trim(),
-          password: document.getElementById("password").value,
+        try {
+        // Django login takes JSON and returns { access, refresh }
+        const data = await apiFetch("/auth/login", {
+          method: "POST",
+          json: {
+            email: document.getElementById("email").value.trim(),
+            password: document.getElementById("password").value,
+          },
         });
-
-        const data = await apiFetch("/auth/login", { method: "POST", body });
-        Auth.setToken(data.access_token);
+        Auth.setTokens(data.access, data.refresh);
         window.location.href = "dashboard.html";
+
       } catch (err) {
         msg.textContent = err.message;   // textContent, not innerHTML = no XSS
         msg.className = "msg error";
