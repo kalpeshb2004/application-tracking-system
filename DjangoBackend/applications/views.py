@@ -5,6 +5,8 @@ from rest_framework import status as http_status
 from rest_framework.decorators import action
 from rest_framework.exceptions import ValidationError
 from rest_framework.response import Response
+from .matching import compute_match
+from .throttles import MatchThrottle
 
 from .models import Application, FollowUp
 from .serializers import (
@@ -68,6 +70,26 @@ class ApplicationViewSet(viewsets.ModelViewSet):
 
         items = application.followups.order_by("followup_date", "id")
         return Response(FollowUpSerializer(items, many=True).data)   # plain list, no paging
+
+        # ---------- POST /api/applications/{id}/match/ ----------
+    # Compare MY resume with THIS application's job description
+    @action(detail=True, methods=["post"], url_path="match", throttle_classes=[MatchThrottle])
+    def match_resume(self, request, pk=None):
+        application = self.get_object()                  # 404 if not mine
+        resume = request.user.resume_text
+        if not resume:
+            return Response({"detail": "Upload your resume first."}, status=400)
+        jd = application.job_description or ""
+        if len(jd.strip()) < 50:
+            return Response(
+                {"detail": "Add a job description (at least 50 characters) to this application first."},
+                status=400,
+            )
+
+        result = compute_match(jd, resume)
+        application.match_score = result["score"]
+        application.save(update_fields=["match_score"])
+        return Response(result)
 
 
 class FollowUpViewSet(
