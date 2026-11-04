@@ -155,7 +155,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "applications.pagination.StandardPagination",
     "DEFAULT_THROTTLE_RATES": {
         "resume": "10/min",
-        "jd_parse": "10/min",      # AI parser ke liye. Abhi use nahi ho raha, harmless
+        "jd_parse": "10/min", 
+        "match": "20/min",     # AI parser ke liye. Abhi use nahi ho raha, harmless
     },
 }
 # ---------- JWT (SimpleJWT) ----------

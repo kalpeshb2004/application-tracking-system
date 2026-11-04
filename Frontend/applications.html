@@ -28,6 +28,22 @@
 
     <div id="banner" class="banner hidden"></div>
 
+    <!-- Resume card -->
+    <div class="card" id="resumeCard">
+      <div class="resume-row">
+        <div>
+          <h2>My resume</h2>
+          <p class="resume-info" id="resumeInfo">Loading...</p>
+        </div>
+        <div class="resume-actions">
+          <input type="file" id="resumeFile" accept="application/pdf,.pdf" class="hidden" />
+          <button class="btn-sm" id="resumeUploadBtn">Upload PDF</button>
+          <button class="btn-sm btn-danger hidden" id="resumeDeleteBtn">Remove</button>
+        </div>
+      </div>
+      <p class="msg error" id="resumeMsg"></p>
+    </div>
+
     <div class="toolbar">
       <input type="search" id="search" placeholder="Search company..." />
       <select id="statusFilter"></select>
@@ -38,7 +54,7 @@
         <thead>
           <tr>
             <th>Company</th><th>Role</th><th>Stage</th>
-            <th>Applied</th><th>Deadline</th><th>Source</th><th></th>
+            <th>Applied</th><th>Deadline</th><th>Source</th><th>Match</th><th></th>
           </tr>
         </thead>
         <tbody id="tbody"></tbody>
@@ -87,8 +103,8 @@
           <textarea id="fNotes"></textarea>
         </div>
         <div class="full">
-          <label for="fJd">Job description (used later for resume match)</label>
-          <textarea id="fJd" rows="4"></textarea>
+          <label for="fJd">Job description (paste it here, needed for the resume match)</label>
+          <textarea id="fJd" rows="6"></textarea>
         </div>
       </div>
       <p class="msg error" id="formMsg"></p>
@@ -99,7 +115,7 @@
     </form>
   </dialog>
 
-    <!-- Follow-ups popup -->
+  <!-- Follow-ups popup -->
   <dialog id="fuDlg" class="wide">
     <div class="dlg-head">
       <h2 id="fuTitle">Follow-ups</h2>
@@ -114,6 +130,28 @@
     <p class="msg error" id="fuMsg"></p>
   </dialog>
 
+  <!-- Resume match popup -->
+  <dialog id="matchDlg" class="wide">
+    <div class="dlg-head">
+      <h2 id="matchTitle">Resume match</h2>
+      <button class="btn-sm btn-ghost" id="matchClose">Close</button>
+    </div>
+    <p class="empty" id="matchStatus"></p>
+    <div id="matchBody" class="hidden">
+      <div class="match-top">
+        <div class="ring" id="matchRing"><div class="ring-inner" id="matchRingText">0%</div></div>
+        <div>
+          <div class="match-label" id="matchLabel"></div>
+          <div class="match-sub" id="matchSub"></div>
+        </div>
+      </div>
+      <h3 class="match-h">Matched skills</h3>
+      <div id="matchedChips"></div>
+      <h3 class="match-h">Missing skills (add them to your resume only if you really have them)</h3>
+      <div id="missingChips"></div>
+    </div>
+  </dialog>
+
   <script src="js/api.js"></script>
   <script>
     Auth.requireLogin();
@@ -125,8 +163,9 @@
     let page = 0;
     let hasNext = false;
     let rows = [];
-    let reqId = 0;        // ignore stale responses when user types fast
-    let editingId = null; // null = creating, number = editing
+    let reqId = 0;         // ignore stale responses when the user types fast
+    let editingId = null;  // null = creating, number = editing
+    let fuAppId = null;    // application whose follow-ups are open
 
     function showError(text) {
       $("banner").textContent = text;     // textContent = XSS safe
@@ -162,10 +201,23 @@
       return td;
     }
 
-    // ---------- Load list (API: GET /applications) ----------
+    // ---------- Match column cell ----------
+    function matchCell(score) {
+      const td = document.createElement("td");
+      if (score === null || score === undefined) {
+        td.textContent = "-";
+        return td;
+      }
+      const span = document.createElement("span");
+      span.className = "score " + (score >= 70 ? "high" : score >= 45 ? "mid" : "low");
+      span.textContent = `${Math.round(score)}%`;
+      td.appendChild(span);
+      return td;
+    }
+
+    // ---------- List (API: GET /applications) ----------
     async function load() {
       const my = ++reqId;
-      // Ask for 1 extra row. If it comes back, a next page exists.
       const params = new URLSearchParams({ limit: PAGE_SIZE, offset: page * PAGE_SIZE });
       if ($("statusFilter").value) params.set("status", $("statusFilter").value);
       const q = $("search").value.trim();
@@ -219,27 +271,39 @@
 
         const tdDead = cell(a.deadline);
         if (a.deadline && a.deadline < today && ["Applied", "Screening"].includes(a.status)) {
-          tdDead.className = "overdue";
+          tdDead.style.color = "var(--danger)";
+          tdDead.style.fontWeight = "600";
         }
         tr.appendChild(tdDead);
 
         tr.appendChild(cell(a.source));
+        tr.appendChild(matchCell(a.match_score));
 
+        // Action buttons
         const tdAct = document.createElement("td");
         tdAct.className = "actions";
-        const edit = document.createElement("button");
-        edit.className = "btn-sm btn-ghost";
-        edit.textContent = "Edit";
-        edit.addEventListener("click", () => openForm(a));
-        const del = document.createElement("button");
-        del.className = "btn-sm btn-danger";
-        del.textContent = "Delete";
-        del.addEventListener("click", () => removeApp(a));
+
+        const matchBtn = document.createElement("button");
+        matchBtn.className = "btn-sm btn-ghost";
+        matchBtn.textContent = "Match";
+        matchBtn.addEventListener("click", () => openMatch(a));
+
         const fu = document.createElement("button");
         fu.className = "btn-sm btn-ghost";
         fu.textContent = "Follow-ups";
         fu.addEventListener("click", () => openFollowups(a));
-        tdAct.append(fu, edit, del);
+
+        const edit = document.createElement("button");
+        edit.className = "btn-sm btn-ghost";
+        edit.textContent = "Edit";
+        edit.addEventListener("click", () => openForm(a));
+
+        const del = document.createElement("button");
+        del.className = "btn-sm btn-danger";
+        del.textContent = "Delete";
+        del.addEventListener("click", () => removeApp(a));
+
+        tdAct.append(matchBtn, fu, edit, del);
         tr.appendChild(tdAct);
 
         tbody.appendChild(tr);
@@ -284,7 +348,7 @@
       btn.disabled = true;
       $("formMsg").textContent = "";
 
-      // Empty text → null, so backend stores NULL, not ""
+      // Empty text → null, so the backend stores NULL, not ""
       const orNull = (v) => (v.trim() === "" ? null : v.trim());
       const payload = {
         company: $("fCompany").value.trim(),
@@ -299,10 +363,10 @@
 
       try {
         if (editingId === null) {
-          await apiFetch("/applications", { method: "POST", json: payload });   // API: POST
+          await apiFetch("/applications", { method: "POST", json: payload });
           page = 0;
         } else {
-          await apiFetch(`/applications/${editingId}`, { method: "PUT", json: payload });   // API: PUT
+          await apiFetch(`/applications/${editingId}`, { method: "PUT", json: payload });
         }
         $("dlg").close();
         load();
@@ -313,9 +377,111 @@
       }
     });
 
-        // ---------- Follow-ups popup ----------
-    let fuAppId = null;
+    // ---------- Resume (API: GET / POST / DELETE /resume) ----------
+    function renderResume(r) {
+      if (r.has_resume) {
+        const when = r.updated_at ? r.updated_at.slice(0, 10) : "";
+        $("resumeInfo").textContent = `${r.name} · ${r.characters} characters read · uploaded ${when}`;
+      } else {
+        $("resumeInfo").textContent = "No resume yet. Upload a PDF to see match scores.";
+      }
+      $("resumeUploadBtn").textContent = r.has_resume ? "Replace PDF" : "Upload PDF";
+      $("resumeDeleteBtn").classList.toggle("hidden", !r.has_resume);
+    }
 
+    async function loadResume() {
+      try {
+        renderResume(await apiFetch("/resume"));
+      } catch (err) {
+        $("resumeInfo").textContent = err.message;
+      }
+    }
+
+    $("resumeUploadBtn").addEventListener("click", () => $("resumeFile").click());
+
+    $("resumeFile").addEventListener("change", async () => {
+      const file = $("resumeFile").files[0];
+      $("resumeMsg").textContent = "";
+      if (!file) return;
+      if (file.size > 2 * 1024 * 1024) {
+        $("resumeMsg").textContent = "File is too large. Max 2 MB.";
+        $("resumeFile").value = "";
+        return;
+      }
+      const btn = $("resumeUploadBtn");
+      btn.disabled = true;
+      btn.textContent = "Uploading...";
+      try {
+        const fd = new FormData();
+        fd.append("file", file);
+        // No Content-Type header here. The browser adds the multipart boundary itself.
+        renderResume(await apiFetch("/resume", { method: "POST", body: fd }));
+      } catch (err) {
+        $("resumeMsg").textContent = err.message;
+        loadResume();                 // restore the button label
+      } finally {
+        btn.disabled = false;
+        $("resumeFile").value = "";   // allow picking the same file again
+      }
+    });
+
+    $("resumeDeleteBtn").addEventListener("click", async () => {
+      if (!confirm("Remove your resume text from the server?")) return;
+      try {
+        await apiFetch("/resume", { method: "DELETE" });
+        renderResume({ has_resume: false });
+      } catch (err) {
+        $("resumeMsg").textContent = err.message;
+      }
+    });
+
+    // ---------- Match (API: POST /applications/{id}/match) ----------
+    function renderChips(boxId, items, cls, emptyText) {
+      const box = $(boxId);
+      box.replaceChildren();
+      if (items.length === 0) {
+        const p = document.createElement("p");
+        p.className = "empty";
+        p.textContent = emptyText;
+        box.appendChild(p);
+        return;
+      }
+      items.forEach((s) => {
+        const chip = document.createElement("span");
+        chip.className = `chip ${cls}`;
+        chip.textContent = s;               // text only, XSS safe
+        box.appendChild(chip);
+      });
+    }
+
+    async function openMatch(a) {
+      $("matchTitle").textContent = `Resume match · ${a.company}`;
+      $("matchBody").classList.add("hidden");
+      $("matchStatus").textContent =
+        "Comparing your resume with the job description... the first run can take a few seconds.";
+      $("matchDlg").showModal();
+      try {
+        const r = await apiFetch(`/applications/${a.id}/match`, { method: "POST" });
+        $("matchRing").style.setProperty("--pct", r.score);
+        $("matchRingText").textContent = `${Math.round(r.score)}%`;
+        $("matchLabel").textContent = r.label;
+        $("matchSub").textContent = r.skill_score === null
+          ? `Meaning match: ${Math.round(r.semantic_score)}% · No known skills found in this job description`
+          : `Meaning match: ${Math.round(r.semantic_score)}% · Skills match: ${Math.round(r.skill_score)}%`;
+        renderChips("matchedChips", r.matched_skills, "ok", "No matching skills found.");
+        renderChips("missingChips", r.missing_skills, "miss", "Nothing missing. Your resume covers every listed skill.");
+        $("matchStatus").textContent = "";
+        $("matchBody").classList.remove("hidden");
+        load();                              // refresh the table so the Match column updates
+      } catch (err) {
+        $("matchStatus").textContent = err.message;   // e.g. "Upload your resume first."
+      }
+    }
+
+    $("matchClose").addEventListener("click", () => $("matchDlg").close());
+    $("matchDlg").addEventListener("click", (e) => { if (e.target === $("matchDlg")) $("matchDlg").close(); });
+
+    // ---------- Follow-ups popup ----------
     async function openFollowups(a) {
       fuAppId = a.id;
       $("fuTitle").textContent = `Follow-ups · ${a.company}`;
@@ -426,7 +592,7 @@
 
     $("fuClose").addEventListener("click", () => $("fuDlg").close());
     $("fuDlg").addEventListener("click", (e) => { if (e.target === $("fuDlg")) $("fuDlg").close(); });
-    
+
     // ---------- Events ----------
     $("newBtn").addEventListener("click", () => openForm(null));
     $("cancelBtn").addEventListener("click", () => $("dlg").close());
@@ -437,7 +603,7 @@
 
     $("statusFilter").addEventListener("change", () => { page = 0; load(); });
 
-    let timer;   // debounce: wait 300ms after typing stops
+    let timer;   // debounce: wait 300 ms after typing stops
     $("search").addEventListener("input", () => {
       clearTimeout(timer);
       timer = setTimeout(() => { page = 0; load(); }, 300);
@@ -452,6 +618,7 @@
       .then((me) => { if (me.role === "admin") $("adminLink").classList.remove("hidden"); })
       .catch(() => {});
     load();
+    loadResume();
   </script>
 </body>
 </html>
