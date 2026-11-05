@@ -4,7 +4,6 @@
 
 JobSaver is a full-stack portfolio project. It helps a job seeker stop losing applications in spreadsheets, remember follow-ups, and see how well a resume fits each job description.
 
-**Live demo:** _coming soon_
 
 ## Screenshots
 
