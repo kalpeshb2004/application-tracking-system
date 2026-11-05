@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Job Tracker | Track every job application in one place</title>
+  <meta name="description" content="Track job applications, follow-ups and response rate, and see how well your resume matches each job description." />
+  <link rel="stylesheet" href="css/landing.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div class="wrap">
+      <a href="index.html" class="brand">Job Tracker</a>
+      <nav class="menu" aria-label="Main">
+        <a href="#features" class="link-hide">Features</a>
+        <a href="#how" class="link-hide">How it works</a>
+        <a href="#match" class="link-hide">Resume match</a>
+        <a href="#tech" class="link-hide">Tech</a>
+        <a href="login.html" class="btn btn-outline btn-sm" data-guest>Login</a>
+        <a href="register.html" class="btn btn-primary btn-sm" data-guest>Get started</a>
+        <a href="dashboard.html" class="btn btn-primary btn-sm is-hidden" data-user>Open dashboard</a>
+      </nav>
+    </div>
+  </header>
+
+  <main>
+    <!-- Hero -->
+    <section class="hero">
+      <div class="wrap">
+        <div>
+          <span class="eyebrow">Job search organiser</span>
+          <h1>Track every job application <span>in one place</span></h1>
+          <p class="lead">
+            Stop losing jobs in spreadsheets. Log each application, follow its stage, never miss a follow-up,
+            and see how well your resume fits every job description.
+          </p>
+          <div class="cta-row">
+            <a href="register.html" class="btn btn-primary" data-guest>Create an account</a>
+            <a href="login.html" class="btn btn-outline" data-guest>Login</a>
+            <a href="dashboard.html" class="btn btn-primary is-hidden" data-user>Open dashboard</a>
+          </div>
+        </div>
+
+        <div class="preview" aria-label="Sample dashboard preview">
+          <div class="preview-head"><span>Dashboard</span><span>Sample data</span></div>
+          <div class="stages">
+            <div class="stage"><b>32</b><small>Applied</small></div>
+            <div class="stage"><b>18</b><small>Screening</small></div>
+            <div class="stage"><b>9</b><small>Interview</small></div>
+            <div class="stage"><b>3</b><small>Offer</small></div>
+            <div class="stage"><b>1</b><small>Accepted</small></div>
+          </div>
+          <div class="preview-row">
+            <div class="ring" style="--pct: 28"><span>28%</span></div>
+            <p>Response rate<br />28% of applications got a reply</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="alt">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Everything for your job hunt</h2>
+          <p>Simple tools that answer three questions: where do I stand, what is next, and am I a good fit?</p>
+        </div>
+        <div class="grid3">
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="7" height="18" rx="1"/><rect x="14" y="3" width="7" height="10" rx="1"/></svg></div>
+            <h3>Pipeline tracking</h3>
+            <p>Move every job through Applied, Screening, Interview, Offer and Accepted. Search by company and filter by stage.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 8a6 6 0 0 0-12 0c0 7-3 9-3 9h18s-3-2-3-9"/><path d="M13.7 21a2 2 0 0 1-3.4 0"/></svg></div>
+            <h3>Follow-up dates</h3>
+            <p>Add follow-ups to any application. Upcoming and overdue items show on your dashboard, so nothing is forgotten.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M18 20V10M12 20V4M6 20v-6"/></svg></div>
+            <h3>Analytics dashboard</h3>
+            <p>See jobs per stage, your response rate and applications per month, all calculated for you.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M8 13h8M8 17h8"/></svg></div>
+            <h3>Resume match score</h3>
+            <p>Upload your resume, paste a job description and get a match score with the skills you are missing.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg></div>
+            <h3>Private by design</h3>
+            <p>Every account sees only its own data. Login uses signed tokens that expire and renew safely.</p>
+          </article>
+          <article class="card">
+            <div class="icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg></div>
+            <h3>Admin panel</h3>
+            <p>Platform owners get usage stats and user management, protected by role checks on the server.</p>
+          </article>
+        </div>
+      </div>
+    </section>
+
+    <!-- How it works -->
+    <section id="how">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>How it works</h2>
+          <p>Three steps. No setup.</p>
+        </div>
+        <div class="grid3">
+          <article class="card"><div class="num">1</div><h3>Create an account</h3><p>Register with your email and log in. Your workspace is empty and private.</p></article>
+          <article class="card"><div class="num">2</div><h3>Add your applications</h3><p>Save company, role, stage and notes. Paste the job description to unlock the resume match.</p></article>
+          <article class="card"><div class="num">3</div><h3>Follow up and improve</h3><p>Check the dashboard daily, tick off follow-ups and close skill gaps shown by the match score.</p></article>
+        </div>
+      </div>
+    </section>
+
+    <!-- Resume match -->
+    <section id="match" class="alt">
+      <div class="wrap split">
+        <div>
+          <h2>Know your fit before you apply</h2>
+          <p>Upload your resume once. For any job, the app compares the job description with your resume and shows what matches and what is missing.</p>
+          <ul class="ticks">
+            <li>Understands meaning, not just exact words</li>
+            <li>Lists the skills the job asks for that your resume lacks</li>
+            <li>Runs on the server with a local model, no third-party AI service</li>
+          </ul>
+        </div>
+        <div class="card" aria-label="Sample match result">
+          <div class="match-top">
+            <div class="ring" style="--pct: 68"><span>68%</span></div>
+            <div><strong>Good match</strong><small>Sample result</small></div>
+          </div>
+          <div class="match-h">Matched skills</div>
+          <div><span class="chip ok">Python</span><span class="chip ok">Django</span><span class="chip ok">MySQL</span><span class="chip ok">Git</span></div>
+          <div class="match-h">Missing skills</div>
+          <div><span class="chip miss">Docker</span><span class="chip miss">AWS</span></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Tech -->
+    <section id="tech">
+      <div class="wrap">
+        <div class="section-head">
+          <h2>Built with</h2>
+          <p>A full-stack portfolio project, open on GitHub.</p>
+        </div>
+        <div class="tech-list">
+          <span class="chip tech">Django REST Framework</span>
+          <span class="chip tech">MySQL</span>
+          <span class="chip tech">JWT authentication</span>
+          <span class="chip tech">sentence-transformers</span>
+          <span class="chip tech">JavaScript</span>
+          <span class="chip tech">HTML &amp; CSS</span>
+          <span class="chip tech">Chart.js</span>
+        </div>
+      </div>
+    </section>
+
+    <!-- Privacy -->
+    <section class="alt">
+      <div class="wrap privacy">
+        <h2>Your data stays yours</h2>
+        <p style="margin-top:10px">
+          Passwords are hashed, never stored as plain text. For your resume, only the extracted text is kept (not the PDF),
+          and you can remove it any time from the Applications page.
+        </p>
+      </div>
+    </section>
+
+    <!-- Final call to action -->
+    <section>
+      <div class="wrap">
+        <div class="cta-box">
+          <h2>Ready to organise your job search?</h2>
+          <p>Create your account and add your first application in under a minute.</p>
+          <div class="cta-row">
+            <a href="register.html" class="btn btn-primary" data-guest>Get started</a>
+            <a href="login.html" class="btn btn-outline" data-guest>I already have an account</a>
+            <a href="dashboard.html" class="btn btn-primary is-hidden" data-user>Open dashboard</a>
+          </div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer>
+    <div class="wrap">
+      <span>&copy; <span id="year"></span> Job Tracker. A portfolio project.</span>
+      <a href="https://github.com/kalpeshb2004/job-Tracker" target="_blank" rel="noopener">View source on GitHub</a>
+    </div>
+  </footer>
+
+  <script>
+    // Already logged in? Swap Login / Get started for "Open dashboard".
+    try {
+      if (localStorage.getItem("access")) {
+        document.querySelectorAll("[data-guest]").forEach((el) => el.classList.add("is-hidden"));
+        document.querySelectorAll("[data-user]").forEach((el) => el.classList.remove("is-hidden"));
+      }
+    } catch (e) { /* storage blocked: keep guest buttons */ }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+  </script>
+</body>
+</html>

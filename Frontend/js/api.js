@@ -14,7 +14,7 @@ const Auth = {
     localStorage.removeItem("access");
     localStorage.removeItem("refresh");
     localStorage.removeItem("token");   // old FastAPI token
-    window.location.href = "login.html";
+    window.location.href = "index.html";
   },
   // Call at top of every protected page
   requireLogin() {
