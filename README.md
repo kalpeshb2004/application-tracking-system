@@ -36,44 +36,6 @@ JobSaver is a full-stack portfolio project. It helps a job seeker stop losing ap
 | Database | MySQL |
 | Resume match | fastembed (ONNX Runtime, model `all-MiniLM-L6-v2`), pdfplumber, skill-list keyword check |
 
-## Architecture
-
-```mermaid
-flowchart LR
-  A["Browser<br/>HTML, CSS, JavaScript"] -->|"JSON + JWT"| B["Django REST API"]
-  B --> C[("MySQL")]
-  B --> D["Resume match<br/>ONNX embeddings + skill check"]
-```
-
-```mermaid
-erDiagram
-  USER ||--o{ APPLICATION : owns
-  APPLICATION ||--o{ FOLLOWUP : has
-  USER {
-    int id
-    string email
-    string name
-    string role
-    bool is_active
-    text resume_text
-  }
-  APPLICATION {
-    int id
-    string company
-    string role_title
-    string status
-    date applied_date
-    text job_description
-    float match_score
-  }
-  FOLLOWUP {
-    int id
-    date followup_date
-    bool is_done
-    bool reminder_sent
-  }
-```
-
 ### How the resume match score works
 
 1. Skills are found in the job description and in the resume with a curated skill list (about 90 skills with aliases).
