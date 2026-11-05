@@ -30,7 +30,7 @@ JobSaver is a full-stack portfolio project. It helps a job seeker stop losing ap
 
 | Layer | Technology |
 |---|---|
-| Frontend | HTML, CSS, vanilla JavaScript, Chart.js |
+| Frontend | HTML, CSS, JavaScript, Chart.js |
 | Backend | Python, Django, Django REST Framework |
 | Auth | JWT (SimpleJWT), custom email-based user model |
 | Database | MySQL |
