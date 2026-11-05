@@ -122,21 +122,4 @@ JobSaver/
 
 The backend was first written in FastAPI, then rebuilt with Django REST Framework to learn both. The API shape stayed the same.
 
-## Roadmap
-
-- [x] Authentication with refresh tokens
-- [x] Applications, follow-ups, dashboard, admin panel
-- [x] Resume match score
-- [ ] Email reminders for due follow-ups
-- [ ] Automated tests
-- [ ] Deployment (Netlify for the frontend, Render for the backend)
-
-## Known limitations
-
-- Skill detection uses a fixed list, so unusual skills are not detected.
-- Scanned (image-only) PDF resumes are not supported.
-- Match scores are a guide, not a verdict.
-
-## Author
-
 Built by [@kalpeshb2004](https://github.com/kalpeshb2004).
